@@ -15,7 +15,7 @@ class CarRepository
     function storeData($request)
     {
         $imagePath = null;
-        
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
@@ -30,17 +30,18 @@ class CarRepository
         ]);
     }
 
-    function updateData($request, $car)
-    {
-        $data = $request->only(['car_name', 'day_rate', 'month_rate']);
-        
-        // Handle image upload
+    function updateData($request, $car)    {
+        $data = [
+            'car_name' => $request->car_name,
+            'day_rate' => $request->day_rate,
+            'month_rate' => $request->month_rate,
+        ];
+
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($car->image && Storage::disk('public')->exists($car->image)) {
                 Storage::disk('public')->delete($car->image);
             }
-            
+
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
             $data['image'] = $image->storeAs('cars', $imageName, 'public');
